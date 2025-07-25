@@ -26,23 +26,33 @@ A web application that detects types of bone fractures in X-ray images using a c
 
 ## Setup Instructions
 
-1. **Clone the repository**
+ **Clone the repository**
+ 
 -git clone https://github.com/jyoshika12/Bone-Fracture-Detection-and-Diagnosis.git
--cd Bone-Fracture-Detection-and-Diagnosis
 
-2. **Install dependencies** :
+-cd Bone-Fracture-Detection-and-Diagnosis
+ 
+**Install dependencies** 
+
+
 pip install -r requirements.txt
 
-3.**Create a .env file**:
+**Create a .env file**
+
+
 GEMINI_API_KEY=your_api_key_here
 
-4.**Run the backend**:
+**Run the backend**
+
 uvicorn app:app --reload
 
-5.**Run the frontend** :
+**Run the frontend** 
+
 streamlit run streamlit_app.py
 
 
-Note:
+**Note**
+
 -.env file is ignored for security. Use .env.example as a reference.
+
 -Not intended for medical use without validation.

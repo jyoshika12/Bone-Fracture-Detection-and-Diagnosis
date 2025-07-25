@@ -6,7 +6,7 @@ A web application that detects types of bone fractures in X-ray images using a c
 
 ## Features
 
-- Detects various bone fracture types (e.g., transverse, oblique, spiral)
+- Detects various bone fracture types (e.g. line, angle, messed_up_angle,fracture)
 - Highlights fracture areas in uploaded X-ray images
 - Generates detailed medical analysis using Gemini AI
 - Built with FastAPI backend and Streamlit frontend
@@ -26,27 +26,27 @@ A web application that detects types of bone fractures in X-ray images using a c
 
 ## Setup Instructions
 
- **Clone the repository**
+1. **Clone the repository**
  
 -git clone https://github.com/jyoshika12/Bone-Fracture-Detection-and-Diagnosis.git
 
 -cd Bone-Fracture-Detection-and-Diagnosis
  
-**Install dependencies** 
+2.**Install dependencies** 
 
 
 pip install -r requirements.txt
 
-**Create a .env file**
+3.**Create a .env file**
 
 
 GEMINI_API_KEY=your_api_key_here
 
-**Run the backend**
+4.**Run the backend**
 
 uvicorn app:app --reload
 
-**Run the frontend** 
+5.**Run the frontend** 
 
 streamlit run streamlit_app.py
 

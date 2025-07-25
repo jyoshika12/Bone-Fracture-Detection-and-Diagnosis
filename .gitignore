@@ -1,0 +1,17 @@
+# Ignore environment variables and virtual environments
+.env
+.env.*
+.envrc
+.venv/
+
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+
+# Ignore system/editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore model weights
+*.pt

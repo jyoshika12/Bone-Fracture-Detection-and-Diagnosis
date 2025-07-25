@@ -1,18 +1,18 @@
 from ultralytics import YOLO
+import cv2
 import os
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 
 # Load YOLO model
 model = YOLO('bonefracture.pt')
 
 # Ground truth labels
 ground_truth = {
-    'bf2.jpg': 'line',
+    'bf2.jpg': 'fracture',
     'bf3.jpeg': 'fracture',
-    'bf4.png': 'line',
+    'bf4.png': 'fracture',
     'bf5.jpg': 'fracture',
     'bf6.jpg': 'messed_up_angle',
     'bf7.jpg': 'angle',
@@ -55,22 +55,11 @@ for filename, true_label in ground_truth.items():
     print(f"🔍 Predicted Label: {pred_label}")
 
     # Create per-image confusion matrix
-    labels = list(set([true_label, pred_label]))  # relevant 2 classes
-    cm = confusion_matrix([true_label], [pred_label], labels=labels)
-
-    # Annotate with TP, FP, FN, TN only if 2x2
-    if cm.shape == (2, 2):
-        annotations = np.array([["TN", "FP"], ["FN", "TP"]])
-        annot = np.empty_like(cm).astype(str)
-        for i in range(2):
-            for j in range(2):
-                annot[i, j] = f"{annotations[i][j]}\n{cm[i][j]}"
-    else:
-        annot = cm
+    cm = confusion_matrix([true_label], [pred_label], labels=all_labels)
 
     # Plot
     plt.figure(figsize=(4, 4))
-    sns.heatmap(cm, annot=annot, fmt='', xticklabels=labels, yticklabels=labels, cmap='Oranges')
+    sns.heatmap(cm, annot=True, fmt='d', xticklabels=all_labels, yticklabels=all_labels, cmap='Oranges')
     plt.title(f"Confusion Matrix - {filename}")
     plt.xlabel("Predicted")
     plt.ylabel("True")

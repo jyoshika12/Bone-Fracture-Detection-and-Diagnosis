@@ -12,28 +12,19 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set in the environment variables.")
 
-
 # Load Custom CSS
 def load_css():
-    with open("styles.css") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
+    if os.path.exists("styles.css"):
+        with open("styles.css") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 load_css()
 
 # Title
-st.markdown('<h1 class="title">MedAI Disease Detection & Diagnosis</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="title">MedAI - Bone Fracture Detection & Diagnosis</h1>', unsafe_allow_html=True)
 
 # File Upload Box
-uploaded_file = st.file_uploader("Upload a scan or image", type=["png", "jpg", "jpeg"])
-
-# Disease Selection (Dropdown)
-disease_type = st.selectbox(
-    "Select Disease Type",
-    options=["Bone Fracture", "Eye Disease", "Monkeypox"],
-    index=None,
-    placeholder="Select Type",
-)
+uploaded_file = st.file_uploader("Upload an X-ray scan", type=["png", "jpg", "jpeg"])
 
 # Show the uploaded image
 if uploaded_file:
@@ -41,66 +32,63 @@ if uploaded_file:
     st.image(image, caption="Uploaded Image", use_container_width=True)
 
 # Diagnosis Button
-if uploaded_file and disease_type:
-    if st.button("Get Diagnosis"):
+if uploaded_file:
+    if st.button("Detect Fracture"):
         file_name = uploaded_file.name
         file_size = uploaded_file.size
         st.write("File Name:", file_name)
-        st.write("File Size:", file_size)  # Debugging step
+        st.write("File Size:", file_size)
 
-        # Convert image to bytes
         image_bytes = uploaded_file.getvalue()
         if not image_bytes:
             st.error("Error: Uploaded file is empty!")
         else:
-            st.write("Sending image to backend...")
+            st.write("Analyzing the image...")
 
-        # Send image to backend
+        # Send image to backend (no need for disease_type anymore)
         files = {"file": (file_name, image_bytes, uploaded_file.type)}
-        data = {"disease_type": disease_type}
+
         try:
-            response = requests.post("http://127.0.0.1:8000/predict", files=files, data=data)
+            response = requests.post("http://127.0.0.1:8000/predict", files=files)
             response.raise_for_status()
             result = response.json()
 
-            # Decode the images from base64
+            # Decode and show images
             if "original_image" in result and "processed_image" in result:
                 original_img = Image.open(BytesIO(base64.b64decode(result["original_image"])))
                 processed_img = Image.open(BytesIO(base64.b64decode(result["processed_image"])))
 
-                # Display images side by side
                 col1, col2 = st.columns(2)
                 with col1:
                     st.image(original_img, caption="Original Image", use_container_width=True)
                 with col2:
-                    st.image(processed_img, caption="Processed Image (with Detections)", use_container_width=True)
+                    st.image(processed_img, caption="Processed Image (Detected Fractures)", use_container_width=True)
             else:
                 st.warning("Processed images are not available.")
 
             st.markdown("---")
 
-            # Show detected diseases
+            # Show detected fracture types
             detected_diseases = result.get("detected_diseases", [])
-            st.subheader("Detected Diseases")
+            st.subheader("Detected Fracture Types")
             st.write(", ".join(detected_diseases))
 
-            # AI Medical Analysis and Common Questions
+            # Show Gemini medical analysis
             st.subheader("Medical Analysis:")
             medical_analysis = result.get("gemini_analysis", {})
-            if medical_analysis:
-                for disease in detected_diseases:
-                    analysis_data = medical_analysis.get(disease, {})
-                    diagnosis = analysis_data.get("diagnosis", "No specific diagnosis available.")
+            for disease in detected_diseases:
+                analysis_data = medical_analysis.get(disease, {})
+                diagnosis = analysis_data.get("diagnosis", "No specific diagnosis available.")
 
-                    st.write(f"**{disease} Analysis:**")
-                    st.write(diagnosis.strip())
-                    # Display the model type
+                st.write(f"**{disease} Analysis:**")
+                st.write(diagnosis.strip())
+
+            # Show model type
             model_type = result.get("model_type", "Model type information not available.")
             st.write(f"**Model Type:** {model_type}")
 
-            # If no disease detected
-            if not detected_diseases:
-                st.warning("No disease detected. Please consult a doctor.")
+            if not detected_diseases or detected_diseases == ["No specific fracture detected"]:
+                st.warning("No specific fracture detected. Please consult a radiologist.")
 
             st.markdown("---")
 

@@ -45,7 +45,7 @@ if uploaded_file:
         else:
             st.write("Analyzing the image...")
 
-        # Send image to backend (no need for disease_type anymore)
+        # Send image to backend 
         files = {"file": (file_name, image_bytes, uploaded_file.type)}
 
         try:

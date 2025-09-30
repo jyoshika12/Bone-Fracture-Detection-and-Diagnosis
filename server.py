@@ -135,7 +135,7 @@ async def predict(file: UploadFile = File(...)):
                 diagnosis = "Gemini API failed to provide analysis."
 
         gemini_results[label] = {"diagnosis": diagnosis}
-        print(f"[DEBUG] Diagnosis for {label}: {diagnosis[:100]}...")  # show first 100 chars
+        print(f"[DEBUG] Diagnosis for {label}: {diagnosis[:100]}...") 
 
     try:
         encoded_original = encode_image(image)
